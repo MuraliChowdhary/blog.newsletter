@@ -28,10 +28,10 @@ export function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navigationItems = [
-        { name: 'Home', href: '/', icon: Home },
-        { name: 'Blog', href: '/blog', icon: FileText },
-        { name: 'About', href: '/about', icon: Info },
-        { name: 'Contact', href: '/contact', icon: Phone },
+        // { name: 'Home', href: '/', icon: Home },
+        // { name: 'Blog', href: '/blog', icon: FileText },
+        // { name: 'About', href: '/about', icon: Info },
+        // { name: 'Contact', href: '/contact', icon: Phone },
     ];
 
     return (
@@ -46,7 +46,7 @@ export function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation Links */}
-                    <nav className="hidden md:flex items-center space-x-8">
+                    {/* <nav className="hidden md:flex items-center space-x-8">
                         {navigationItems.map((item) => (
                             <Link
                                 key={item.name}
@@ -57,12 +57,13 @@ export function Navbar() {
                                 {item.name}
                             </Link>
                         ))}
-                    </nav>
+                    </nav> */}
 
                     {/* Search, Theme Toggle, and Mobile Menu Button */}
+                    
                     <div className="flex items-center space-x-4">
                         {/* Search (Desktop only for now, can be added to mobile sheet) */}
-                        <div className="relative hidden sm:block">
+                        {/* <div className="relative hidden sm:block">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <Search className="h-4 w-4 text-muted-foreground" />
                             </div>
@@ -71,7 +72,9 @@ export function Navbar() {
                                 placeholder="Search posts..."
                                 className="pl-10 w-64 bg-background/50 border-border/50 focus:border-blue-400"
                             />
-                        </div>
+                            </div> */}
+
+                    
 
                         {/* Theme Toggle */}
                         <DropdownMenu>
@@ -112,7 +115,7 @@ export function Navbar() {
                                     </SheetHeader>
                                     <nav className="mt-8">
                                         <div className="space-y-2">
-                                            {navigationItems.map((item) => {
+                                            {/* {navigationItems.map((item) => {
                                                 const Icon = item.icon;
                                                 return (
                                                     <Link
@@ -125,9 +128,9 @@ export function Navbar() {
                                                         <span className="font-medium">{item.name}</span>
                                                     </Link>
                                                 );
-                                            })}
-                                            {/* Mobile Search within the Sheet */}
-                                            <div className="px-3 py-2">
+                                            })} */}
+                                         
+                                            {/* <div className="px-3 py-2">
                                                 <div className="relative">
                                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                                         <Search className="h-4 w-4 text-muted-foreground" />
@@ -138,7 +141,7 @@ export function Navbar() {
                                                         className="pl-10 w-full bg-background/50 border-border/50 focus:border-blue-400"
                                                     />
                                                 </div>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </nav>
                                 </SheetContent>

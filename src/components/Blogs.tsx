@@ -112,10 +112,10 @@ export default function Blogs() {
 
         {/* Featured Article */}
         <section className="mb-20">
-          <div className="text-center mb-12">
+          {/* <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">Featured Article</h2>
             <p className="text-muted-foreground">Dive into our latest insights and discoveries</p>
-          </div>
+          </div> */}
 
           <Card
             className="max-w-4xl mx-auto bg-card border-border overflow-hidden cursor-pointer group hover:bg-accent/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10"
