@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { getCookieValue } from '@/lib/getCookieValue';
 
 interface BlogPost {
   id: string;
@@ -112,7 +113,7 @@ export function ManageBlogPosts() {
     setLoading(true);
     setError(null);
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
+      const jwtToken = getCookieValue('jwtToken');
       if (!jwtToken) {
         toast.error('Authentication required. Please sign in as an admin to view posts.');
         setLoading(false);
@@ -127,6 +128,7 @@ export function ManageBlogPosts() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
+        credentials: 'include', 
       });
 
       const result = await response.json();
@@ -135,8 +137,8 @@ export function ManageBlogPosts() {
         if (result && typeof result.data === 'object' && Array.isArray(result.data.posts)) {
           setPosts(result.data.posts);
         } else if (result && result.message) {
-            setPosts([]);
-            toast.info(result.message);
+          setPosts([]);
+          toast.info(result.message);
         } else {
           console.warn("API response format unexpected, 'data.posts' array not found or data not an object:", result);
           setPosts([]);
@@ -183,7 +185,7 @@ export function ManageBlogPosts() {
 
     setLoading(true);
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
+      const jwtToken = getCookieValue('jwtToken');
       if (!jwtToken) {
         toast.error('Authentication required to delete posts.');
         setLoading(false);
@@ -195,6 +197,7 @@ export function ManageBlogPosts() {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
         },
+        credentials: 'include', 
       });
 
       const data = await response.json();
@@ -301,35 +304,35 @@ export function ManageBlogPosts() {
                     <h3 className="text-xl font-semibold">{post.title}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt || post.content?.substring(0, 100) + '...' || 'No excerpt available.'}</p>
                     <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                        <CalendarDays className="h-3 w-3" />
-                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                        {post.readTime && (
-                          <>
-                            <span>•</span>
-                            <BookOpenText className="h-3 w-3" />
-                            <span>{post.readTime} min read</span>
-                          </>
-                        )}
-                         {post.author && (
-                            <>
-                                <span>•</span>
-                                <img src={post.author.avatar || 'https://www.gravatar.com/avatar/?d=mp'} alt={post.author.name} className="h-4 w-4 rounded-full" />
-                                <span>{post.author.name}</span>
-                            </>
-                        )}
+                      <CalendarDays className="h-3 w-3" />
+                      <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      {post.readTime && (
+                        <>
+                          <span>•</span>
+                          <BookOpenText className="h-3 w-3" />
+                          <span>{post.readTime} min read</span>
+                        </>
+                      )}
+                      {post.author && (
+                        <>
+                          <span>•</span>
+                          <img src={post.author.avatar || 'https://www.gravatar.com/avatar/?d=mp'} alt={post.author.name} className="h-4 w-4 rounded-full" />
+                          <span>{post.author.name}</span>
+                        </>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                        {post.tags && post.tags.map((tag, tagIndex) => (
-                            <Badge key={tagIndex} variant="secondary">{tag}</Badge>
-                        ))}
-                        {post.published ? (
-                            <Badge variant="default" className="bg-green-500 hover:bg-green-600">Published</Badge>
-                        ) : (
-                            <Badge variant="destructive">Draft</Badge>
-                        )}
-                        {post.featured && (
-                            <Badge variant="outline" className="border-primary text-primary">Featured</Badge>
-                        )}
+                      {post.tags && post.tags.map((tag, tagIndex) => (
+                        <Badge key={tagIndex} variant="secondary">{tag}</Badge>
+                      ))}
+                      {post.published ? (
+                        <Badge variant="default" className="bg-green-500 hover:bg-green-600">Published</Badge>
+                      ) : (
+                        <Badge variant="destructive">Draft</Badge>
+                      )}
+                      {post.featured && (
+                        <Badge variant="outline" className="border-primary text-primary">Featured</Badge>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">

@@ -70,7 +70,7 @@ export default function Blogs() {
               <Skeleton className="h-4 w-2/3" />
             </div>
           </div>
-          
+
           {/* Latest Articles Skeleton */}
           <div className="mb-12">
             <Skeleton className="h-8 w-48 mb-8" />
@@ -116,8 +116,8 @@ export default function Blogs() {
             <h2 className="text-3xl font-bold text-foreground mb-4">Featured Article</h2>
             <p className="text-muted-foreground">Dive into our latest insights and discoveries</p>
           </div>
-          
-          <Card 
+
+          <Card
             className="max-w-4xl mx-auto bg-card border-border overflow-hidden cursor-pointer group hover:bg-accent/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10"
             onClick={() => handleReadMore(featuredPost.slug)}
           >
@@ -139,18 +139,18 @@ export default function Blogs() {
                 </div>
               </div>
             </div>
-            
+
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
                 {featuredPost.title}
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent className="pb-6">
               <p className="text-muted-foreground text-lg leading-relaxed mb-6">
                 {featuredPost.excerpt}
               </p>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <Avatar className="w-12 h-12 ring-2 ring-primary/20">
@@ -164,7 +164,7 @@ export default function Blogs() {
                     <p className="text-sm text-muted-foreground">{featuredPost.author.expertise || 'Tech Content Writer'}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-6 text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Eye className="w-4 h-4" />
@@ -192,11 +192,11 @@ export default function Blogs() {
               <p className="text-muted-foreground">Discover insights, tutorials, and thoughts on development</p>
             </div>
           </div>
-          
+
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
             {regularPosts.map((blog) => (
-              <Card 
-                key={blog.id} 
+              <Card
+                key={blog.id}
                 className="bg-card border-border overflow-hidden cursor-pointer group hover:bg-accent/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/10"
                 onClick={() => handleReadMore(blog.slug)}
               >
@@ -213,7 +213,7 @@ export default function Blogs() {
                     </div>
                   </div>
                 </div>
-                
+
                 <CardHeader className="pb-3">
                   <div className="text-sm text-muted-foreground mb-2">
                     {formatDate(blog.publishedAt)}
@@ -222,17 +222,17 @@ export default function Blogs() {
                     {blog.title}
                   </CardTitle>
                 </CardHeader>
-                
+
                 <CardContent className="pb-4">
                   <p className="text-muted-foreground line-clamp-3 mb-4">
                     {blog.excerpt}
                   </p>
-                  
+
                   <div className="flex flex-wrap gap-2 mb-4">
                     {blog.tags.slice(0, 3).map((tag) => (
-                      <Badge 
-                        key={tag} 
-                        variant="secondary" 
+                      <Badge
+                        key={tag}
+                        variant="secondary"
                         className="bg-secondary/50 text-secondary-foreground hover:bg-secondary/70 text-xs"
                       >
                         {tag}
@@ -245,7 +245,7 @@ export default function Blogs() {
                     )}
                   </div>
                 </CardContent>
-                
+
                 <CardFooter className="pt-0 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="w-8 h-8">
@@ -258,9 +258,9 @@ export default function Blogs() {
                       <p className="text-sm font-medium text-foreground">{blog.author.name}</p>
                     </div>
                   </div>
-                  
-                  <Button 
-                    variant="ghost" 
+
+                  <Button
+                    variant="ghost"
                     size="sm"
                     className="text-primary hover:text-primary/80 hover:bg-primary/10 group-hover:translate-x-1 transition-transform"
                   >

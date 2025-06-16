@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Loader2, Users, FileText, Heart, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { getCookieValue } from '@/lib/getCookieValue';
 
 // Define types for expected API responses
 interface PostStats {
@@ -39,7 +40,8 @@ export function DashboardOverview() {
     setLoading(true);
     setError(null);
 
-    const jwtToken = localStorage.getItem('jwtToken');
+    const jwtToken = getCookieValue("jwtToken");
+     console.log('JWT Token:', jwtToken); // Debugging line to check token // Replace with your actual method to get the JWT token
     if (!jwtToken) {
       toast.error('Authentication required. Please sign in as an admin to view dashboard stats.');
       setLoading(false);
@@ -55,6 +57,7 @@ export function DashboardOverview() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
+        credentials: 'include',
       });
       const blogResult = await blogResponse.json();
 
@@ -83,6 +86,7 @@ export function DashboardOverview() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
+        credentials: 'include', 
       });
       const userResult = await userResponse.json();
 

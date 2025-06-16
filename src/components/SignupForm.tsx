@@ -24,7 +24,7 @@ export function SignUpForm() {
   const [bio, setBio] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async (e:any) => {
+  const handleSignUp = async (e: any) => {
     e.preventDefault();
 
     if (!name || !email || !password) {
@@ -47,6 +47,7 @@ export function SignUpForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name, email, password, role, avatar: finalAvatar, bio }),
+        credentials: 'include', 
       });
 
       const data = await response.json();
@@ -56,7 +57,8 @@ export function SignUpForm() {
         // We only store non-sensitive user data in localStorage if needed for client-side display.
         localStorage.setItem('user', JSON.stringify(data.user));
         toast.success(data.message || 'Sign up successful!');
-        router.push('/admin'); 
+        localStorage.setItem('jwtToken', data.token); // Store JWT token if needed for client-side operations
+        router.push('/admin');
       } else {
         toast.error(data.error || 'Sign up failed. Please try again.');
       }

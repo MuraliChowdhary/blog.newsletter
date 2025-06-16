@@ -19,9 +19,9 @@ export function SignInForm() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  
 
-  const handleSignIn = async (e:any) => {
+
+  const handleSignIn = async (e: any) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -37,6 +37,7 @@ export function SignInForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include', 
       });
 
       const data = await response.json();
@@ -45,6 +46,7 @@ export function SignInForm() {
         // The backend now sets the HTTP-only cookie directly.
         // We only store non-sensitive user data in localStorage if needed for client-side display.
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('jwtToken', data.token); // Store JWT token if needed for client-side operations
         toast.success(data.message || 'Sign in successful!');
         router.push('/admin'); // Redirect to dashboard or home
       } else {
@@ -60,7 +62,7 @@ export function SignInForm() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-        {}
+      { }
       <Card className="w-full max-w-md mx-auto p-6 rounded-lg shadow-lg">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold">Sign In</CardTitle>

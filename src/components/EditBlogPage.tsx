@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { getCookieValue } from '@/lib/getCookieValue';
 
 // Define a type for the initial data prop
 interface EditBlogPostFormProps {
@@ -89,7 +90,7 @@ export function EditBlogPostForm({ initialData, onSuccess, onCancel }: EditBlogP
 
     setLoading(true);
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
+      const jwtToken = getCookieValue('jwtToken');
       if (!jwtToken) {
         toast.error('Authentication required. Please sign in as an admin.');
         setLoading(false);
@@ -115,6 +116,7 @@ export function EditBlogPostForm({ initialData, onSuccess, onCancel }: EditBlogP
           'Authorization': `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(updatedData),
+        credentials: 'include', 
       });
 
       const data = await response.json();

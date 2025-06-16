@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Edit, User, Mail, CalendarDays, ThumbsUp, MessageSquare, BookOpenText } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import  {EditUserRoleForm}  from './EditUserForm'; // Import the new edit user role form
+import { EditUserRoleForm } from './EditUserForm'; // Import the new edit user role form
+import { getCookieValue } from '@/lib/getCookieValue';
 
 // Define a type for your user object from the backend
 interface UserData {
@@ -38,7 +39,8 @@ export function ManageUsers() {
     setLoading(true);
     setError(null);
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
+      const jwtToken = getCookieValue('jwtToken');
+      console.log('JWT Token:', jwtToken); // Debugging line to check token
       if (!jwtToken) {
         toast.error('Authentication required. Please sign in as an admin.');
         setLoading(false);
@@ -53,6 +55,7 @@ export function ManageUsers() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
+        credentials: 'include', 
       });
 
       const result = await response.json();
@@ -155,15 +158,15 @@ export function ManageUsers() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground justify-end sm:justify-start mt-3 sm:mt-0">
-                    <span className="flex items-center gap-1">
-                        <BookOpenText className="h-4 w-4" /> {user.postsCount || 0} Posts
-                    </span>
-                    <span className="flex items-center gap-1">
-                        <ThumbsUp className="h-4 w-4" /> {user.receivedLikesCount || 0} Likes
-                    </span>
-                    <span className="flex items-center gap-1">
-                        <CalendarDays className="h-4 w-4" /> Joined: {new Date(user.createdAt).toLocaleDateString()}
-                    </span>
+                  <span className="flex items-center gap-1">
+                    <BookOpenText className="h-4 w-4" /> {user.postsCount || 0} Posts
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <ThumbsUp className="h-4 w-4" /> {user.receivedLikesCount || 0} Likes
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <CalendarDays className="h-4 w-4" /> Joined: {new Date(user.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 <div className="w-full sm:w-auto mt-3 sm:mt-0">
                   <Button variant="outline" onClick={() => handleEditClick(user)} className="w-full sm:w-auto flex items-center gap-2">

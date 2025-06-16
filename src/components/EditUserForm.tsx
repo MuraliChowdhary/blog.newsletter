@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { getCookieValue } from '@/lib/getCookieValue';
 
 // Define a type for the initial data prop
 interface EditUserRoleFormProps {
@@ -29,7 +30,7 @@ export function EditUserRoleForm({ initialData, onSuccess, onCancel }: EditUserR
     setLoading(true);
 
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
+      const jwtToken = getCookieValue('jwtToken');
       if (!jwtToken) {
         toast.error('Authentication required. Please sign in as an admin.');
         setLoading(false);
@@ -43,6 +44,7 @@ export function EditUserRoleForm({ initialData, onSuccess, onCancel }: EditUserR
           'Authorization': `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({ role: selectedRole }),
+        credentials: 'include', 
       });
 
       const data = await response.json();

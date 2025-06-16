@@ -9,13 +9,13 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  ArrowLeft, 
-  Clock, 
-  Eye, 
-  Heart, 
-  MessageCircle, 
-  Share2, 
+import {
+  ArrowLeft,
+  Clock,
+  Eye,
+  Heart,
+  MessageCircle,
+  Share2,
   BookOpen,
   Calendar,
   User,
@@ -159,9 +159,9 @@ export default function BlogPost({ slug }: BlogPostProps) {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Button */}
-        <Button 
+        <Button
           onClick={handleBack}
-          variant="ghost" 
+          variant="ghost"
           className="mb-8 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -178,7 +178,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
               className="w-full h-96 object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-            
+
             {/* Newsletter Badge */}
             <div className="absolute top-4 left-4">
               <Badge className="bg-primary/90 text-primary-foreground border-0">
@@ -217,7 +217,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                 <p className="text-sm text-muted-foreground">{post.author.bio || 'Passionate about sharing insights through newsletters'}</p>
               </div>
             </div>
-            
+
             {/* Action Buttons */}
             <div className="flex items-center gap-4">
               <Button
@@ -243,9 +243,9 @@ export default function BlogPost({ slug }: BlogPostProps) {
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-8">
             {post.tags.map((tag) => (
-              <Badge 
-                key={tag} 
-                variant="secondary" 
+              <Badge
+                key={tag}
+                variant="secondary"
                 className="hover:bg-primary/20 transition-colors"
               >
                 {tag}
@@ -331,7 +331,7 @@ export default function BlogPost({ slug }: BlogPostProps) {
                     rows={3}
                   />
                   <div className="flex justify-end">
-                    <Button 
+                    <Button
                       onClick={handleCommentSubmit}
                       disabled={!comment.trim()}
                     >

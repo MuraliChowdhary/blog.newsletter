@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch'; // For published/featured toggl
 import { Badge } from '@/components/ui/badge'; // For displaying tags
 import { Loader2, X } from 'lucide-react'; // For loading spinner and tag removal icon
 import { toast } from 'sonner'; // Import toast from sonner
+import { getCookieValue } from '@/lib/getCookieValue';
 
 export function CreateBlogPostForm() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export function CreateBlogPostForm() {
 
     setLoading(true);
     try {
-      const jwtToken = localStorage.getItem('jwtToken'); // Retrieve JWT token
+      const jwtToken = getCookieValue('jwtToken'); // Retrieve JWT token
 
       if (!jwtToken) {
         toast.error('Authentication required. Please sign in as an admin.'); // Use toast.error
@@ -94,6 +95,7 @@ export function CreateBlogPostForm() {
           'Authorization': `Bearer ${jwtToken}`, // Attach JWT token
         },
         body: JSON.stringify(postData),
+        credentials: 'include', // Ensure cookies are sent with the request
       });
 
       const data = await response.json();
@@ -195,7 +197,7 @@ export function CreateBlogPostForm() {
                 placeholder="your-blog-post-slug (e.g., 'my-awesome-post')"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/^-+|-+$/g, '').replace(/-+/g, '-'))}
-                // Basic slugification on client-side for immediate feedback
+              // Basic slugification on client-side for immediate feedback
               />
               <p className="text-xs text-muted-foreground">Will be auto-generated from title if left blank.</p>
             </div>
