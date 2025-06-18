@@ -1,11 +1,6 @@
-import HomePage from "@/components/HomePage/home";
+// app/page.tsx
+import { redirect } from 'next/navigation';
 
-
-export  default  function Home()
-{
-   return (
-    <div>
-      <HomePage/>
-    </div>
-   )
+export default function Home() {
+  redirect('/blog');
 }
