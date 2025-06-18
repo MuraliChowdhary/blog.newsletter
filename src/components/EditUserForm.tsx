@@ -44,7 +44,7 @@ export function EditUserRoleForm({ initialData, onSuccess, onCancel }: EditUserR
           'Authorization': `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({ role: selectedRole }),
-        credentials: 'include', 
+        // credentials: 'include', 
       });
 
       const data = await response.json();

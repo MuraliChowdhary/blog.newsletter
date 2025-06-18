@@ -95,7 +95,7 @@ export function CreateBlogPostForm() {
           'Authorization': `Bearer ${jwtToken}`, // Attach JWT token
         },
         body: JSON.stringify(postData),
-        credentials: 'include', // Ensure cookies are sent with the request
+        // credentials: 'include', // Ensure cookies are sent with the request
       });
 
       const data = await response.json();

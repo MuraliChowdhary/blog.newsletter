@@ -55,7 +55,7 @@ export function ManageUsers() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
-        credentials: 'include', 
+        // credentials: 'include', 
       });
 
       const result = await response.json();

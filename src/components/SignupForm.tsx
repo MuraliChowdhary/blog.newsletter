@@ -47,7 +47,7 @@ export function SignUpForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name, email, password, role, avatar: finalAvatar, bio }),
-        credentials: 'include', 
+        // credentials: 'include', 
       });
 
       const data = await response.json();

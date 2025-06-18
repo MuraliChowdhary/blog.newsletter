@@ -57,7 +57,7 @@ export function DashboardOverview() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
-        credentials: 'include',
+        // credentials: 'include',
       });
       const blogResult = await blogResponse.json();
 
@@ -86,7 +86,7 @@ export function DashboardOverview() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
-        credentials: 'include', 
+        // credentials: 'include', 
       });
       const userResult = await userResponse.json();
 

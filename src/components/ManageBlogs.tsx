@@ -128,7 +128,7 @@ export function ManageBlogPosts() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${jwtToken}`,
         },
-        credentials: 'include', 
+        // credentials: 'include', 
       });
 
       const result = await response.json();
@@ -197,7 +197,7 @@ export function ManageBlogPosts() {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
         },
-        credentials: 'include', 
+        // credentials: 'include', 
       });
 
       const data = await response.json();

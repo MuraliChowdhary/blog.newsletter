@@ -116,7 +116,7 @@ export function EditBlogPostForm({ initialData, onSuccess, onCancel }: EditBlogP
           'Authorization': `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(updatedData),
-        credentials: 'include', 
+        // credentials: 'include', 
       });
 
       const data = await response.json();
