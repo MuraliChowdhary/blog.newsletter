@@ -8,7 +8,7 @@ import { Toaster } from 'sonner';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Pick&Partner – Newsletter Marketing Insights & Strategies',
+  title: 'Pick & Partner',
   description: 'Unlock the power of newsletter marketing with Pick&Partner. Discover expert insights, practical tutorials, and effective strategies to grow your audience and boost engagement.',
 };
 
