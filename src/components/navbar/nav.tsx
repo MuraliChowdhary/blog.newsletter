@@ -98,55 +98,7 @@ export function Navbar() {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        {/* Mobile Menu Button */}
-                        <div className="md:hidden">
-                            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                                <SheetTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                        <Menu className="h-6 w-6" />
-                                        <span className="sr-only">Open menu</span>
-                                    </Button>
-                                </SheetTrigger>
-                                <SheetContent side="left" className="w-[300px] sm:w-[350px]">
-                                    <SheetHeader>
-                                        <SheetTitle className="text-left text-xl font-bold">
-                                            Pick & Partner
-                                        </SheetTitle>
-                                    </SheetHeader>
-                                    <nav className="mt-8">
-                                        <div className="space-y-2">
-                                            {/* {navigationItems.map((item) => {
-                                                const Icon = item.icon;
-                                                return (
-                                                    <Link
-                                                        key={item.name}
-                                                        href={item.href}
-                                                        onClick={() => setIsMobileMenuOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-3 rounded-lg text-foreground hover:bg-muted transition-colors group"
-                                                    >
-                                                        <Icon className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
-                                                        <span className="font-medium">{item.name}</span>
-                                                    </Link>
-                                                );
-                                            })} */}
-                                         
-                                            {/* <div className="px-3 py-2">
-                                                <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                        <Search className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
-                                                    <Input
-                                                        type="text"
-                                                        placeholder="Search posts..."
-                                                        className="pl-10 w-full bg-background/50 border-border/50 focus:border-blue-400"
-                                                    />
-                                                </div>
-                                            </div> */}
-                                        </div>
-                                    </nav>
-                                </SheetContent>
-                            </Sheet>
-                        </div>
+                         
                     </div>
                 </div>
             </div>
