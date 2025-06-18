@@ -122,7 +122,7 @@ export function SignUpForm() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="USER">USER</SelectItem>
-                  <SelectItem value="ADMIN">ADMIN</SelectItem>
+                  {/* <SelectItem value="ADMIN">ADMIN</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
