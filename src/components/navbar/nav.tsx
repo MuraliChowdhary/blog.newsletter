@@ -20,6 +20,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet'; // Assuming you have shadcn/ui Sheet component
+import Image from 'next/image';
 
 export function Navbar() {
     const router = useRouter();
@@ -38,11 +39,24 @@ export function Navbar() {
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
+                    
                     <Link href="/" className="flex-shrink-0">
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                       <div className='flex justify-center items-center space-x-2'>
+                         <div>
+                            <Image
+                        src="/pnp.png" 
+                        alt="PickandPartner logo" 
+                        width={70} 
+                        height={60} 
+                        className="rounded"
+                         />
+                        </div>
+                        <div>
+                            <h1 className=" leading-none text-lg font-bold ">
                             Pick & Partner
                         </h1>
+                        </div>
+                       </div>
                     </Link>
 
                     {/* Desktop Navigation Links */}
