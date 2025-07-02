@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, Moon, Sun, Menu, Home, FileText, Info, Phone } from 'lucide-react';
+import { Search, Moon, Sun, Menu, Home, FileText, Info, Phone, User } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,7 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from '@/components/ui/sheet'; // Assuming you have shadcn/ui Sheet component
+} from '@/components/ui/sheet'; 
 import Image from 'next/image';
 
 export function Navbar() {
@@ -29,38 +29,39 @@ export function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navigationItems = [
-        // { name: 'Home', href: '/', icon: Home },
-        // { name: 'Blog', href: '/blog', icon: FileText },
-        // { name: 'About', href: '/about', icon: Info },
-        // { name: 'Contact', href: '/contact', icon: Phone },
+        { name: 'Home', href: '/', icon: Home },
+        { name: 'Blog', href: '/blog', icon: FileText },
+        { name: 'About', href: '/about', icon: Info },
+        { name: 'Contact', href: '/contact', icon: Phone },
+         { name: 'Login', href: '/signin', icon: User },
     ];
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    
-                    <Link href="/" className="flex-shrink-0">
-                       <div className='flex justify-center items-center space-x-2'>
-                         <div>
-                            <Image
-                        src="/pnp.png" 
-                        alt="PickandPartner logo" 
-                        width={70} 
-                        height={60} 
-                        className="rounded"
-                         />
+                    {/* Logo */}
+                     <Link href="/" className="flex-shrink-0">
+                        <div className='flex justify-center items-center space-x-2'>
+                            <div>
+                                <Image
+                                    src="/pnp.png"
+                                    alt="PickandPartner logo"
+                                    width={70}
+                                    height={60}
+                                    className="rounded"
+                                />
+                            </div>
+                            <div>
+                                <h1 className=" leading-none text-xl font-bold ">
+                                    Pick & Partner
+                                </h1>
+                            </div>
                         </div>
-                        <div>
-                            <h1 className=" leading-none text-lg font-bold ">
-                            Pick & Partner
-                        </h1>
-                        </div>
-                       </div>
                     </Link>
 
                     {/* Desktop Navigation Links */}
-                    {/* <nav className="hidden md:flex items-center space-x-8">
+                    <nav className="hidden md:flex items-center space-x-8">
                         {navigationItems.map((item) => (
                             <Link
                                 key={item.name}
@@ -71,13 +72,12 @@ export function Navbar() {
                                 {item.name}
                             </Link>
                         ))}
-                    </nav> */}
+                    </nav>
 
                     {/* Search, Theme Toggle, and Mobile Menu Button */}
-                    
                     <div className="flex items-center space-x-4">
                         {/* Search (Desktop only for now, can be added to mobile sheet) */}
-                        {/* <div className="relative hidden sm:block">
+                        <div className="relative hidden sm:block">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <Search className="h-4 w-4 text-muted-foreground" />
                             </div>
@@ -86,9 +86,7 @@ export function Navbar() {
                                 placeholder="Search posts..."
                                 className="pl-10 w-64 bg-background/50 border-border/50 focus:border-blue-400"
                             />
-                            </div> */}
-
-                    
+                        </div>
 
                         {/* Theme Toggle */}
                         <DropdownMenu>
@@ -112,7 +110,55 @@ export function Navbar() {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                         
+                        {/* Mobile Menu Button */}
+                        <div className="md:hidden">
+                            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                                <SheetTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <Menu className="h-6 w-6" />
+                                        <span className="sr-only">Open menu</span>
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="left" className="w-[300px] sm:w-[350px]">
+                                    <SheetHeader>
+                                        <SheetTitle className="text-left text-xl font-bold">
+                                            Pick & Partner
+                                        </SheetTitle>
+                                    </SheetHeader>
+                                    <nav className="mt-8">
+                                        <div className="space-y-2">
+                                            {navigationItems.map((item) => {
+                                                const Icon = item.icon;
+                                                return (
+                                                    <Link
+                                                        key={item.name}
+                                                        href={item.href}
+                                                        onClick={() => setIsMobileMenuOpen(false)}
+                                                        className="flex items-center gap-3 px-3 py-3 rounded-lg text-foreground hover:bg-muted transition-colors group"
+                                                    >
+                                                        <Icon className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                                                        <span className="font-medium">{item.name}</span>
+                                                    </Link>
+                                                );
+                                            })}
+                                            {/* Mobile Search within the Sheet */}
+                                            <div className="px-3 py-2">
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <Search className="h-4 w-4 text-muted-foreground" />
+                                                    </div>
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Search posts..."
+                                                        className="pl-10 w-full bg-background/50 border-border/50 focus:border-blue-400"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
                 </div>
             </div>

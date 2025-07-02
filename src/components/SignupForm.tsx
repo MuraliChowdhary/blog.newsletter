@@ -121,8 +121,8 @@ export function SignUpForm() {
                   <SelectValue placeholder="Select a role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USER">USER</SelectItem>
-                  {/* <SelectItem value="ADMIN">ADMIN</SelectItem> */}
+                     <SelectItem value="USER">USER</SelectItem>
+                    {/* <SelectItem value="ADMIN">ADMIN</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>

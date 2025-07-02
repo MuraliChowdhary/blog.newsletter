@@ -2,18 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Clock, Eye, MessageCircle, Heart } from 'lucide-react';
+import { Star, MessageCircle, MoreHorizontal, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Post, BlogsResponse } from '@/types/blogTypes';
 
 async function fetchBlogs(): Promise<Post[]> {
@@ -31,9 +23,10 @@ async function fetchBlogs(): Promise<Post[]> {
   }
 }
 
-export default function Blogs() {
+export default function MediumBlogUI() {
   const [blogs, setBlogs] = useState<Post[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [bookmarked, setBookmarked] = useState<Set<string>>(new Set());
   const router = useRouter();
 
   useEffect(() => {
@@ -49,42 +42,113 @@ export default function Blogs() {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
+      month: 'short',
       day: 'numeric',
-      year: 'numeric',
+    });
+  };
+
+  const toggleBookmark = (e: React.MouseEvent, postId: string) => {
+    e.stopPropagation();
+    setBookmarked(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(postId)) {
+        newSet.delete(postId);
+      } else {
+        newSet.add(postId);
+      }
+      return newSet;
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          {/* Featured Article Skeleton */}
-          <div className="text-center mb-16">
-            <Skeleton className="h-8 w-64 mx-auto mb-4" />
-            <Skeleton className="h-4 w-96 mx-auto mb-12" />
-            <div className="max-w-4xl mx-auto">
-              <Skeleton className="h-96 w-full rounded-2xl mb-6" />
-              <Skeleton className="h-8 w-3/4 mx-auto mb-4" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-2/3" />
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex items-center justify-between h-14">
+              <div className="flex items-center space-x-8">
+                <div className="text-2xl font-bold">Medium</div>
+                <nav className="hidden md:flex space-x-6">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-16" />
+                </nav>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
             </div>
           </div>
+        </header>
 
-          {/* Latest Articles Skeleton */}
-          <div className="mb-12">
-            <Skeleton className="h-8 w-48 mb-8" />
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i} className="bg-card border-border">
-                  <Skeleton className="h-48 w-full" />
-                  <div className="p-6">
-                    <Skeleton className="h-6 w-3/4 mb-4" />
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-4 w-2/3" />
-                  </div>
-                </Card>
+        {/* Navigation tabs */}
+        <div className="border-b border-gray-200 bg-white">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex space-x-8 overflow-x-auto">
+              {['For you', 'Following', 'Featured', 'Goldman Sachs', 'Typescript', 'Web3'].map((tab, i) => (
+                <div key={i} className="flex items-center space-x-2 py-4 whitespace-nowrap">
+                  <Skeleton className="h-4 w-16" />
+                  {i === 2 && <Skeleton className="h-4 w-8" />}
+                </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main feed */}
+            <div className="lg:col-span-2 space-y-8">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <article key={i} className="group">
+                  <div className="flex items-start space-x-3 mb-2">
+                    <Skeleton className="h-5 w-5 rounded-full" />
+                    <div className="flex-1">
+                      <Skeleton className="h-4 w-32 mb-1" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 pr-4">
+                      <Skeleton className="h-6 w-5/6 mb-2" />
+                      <Skeleton className="h-4 w-full mb-1" />
+                      <Skeleton className="h-4 w-3/4 mb-4" />
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className="h-4 w-12" />
+                          <Skeleton className="h-4 w-8" />
+                        </div>
+                        <Skeleton className="h-4 w-4" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-20 w-20 rounded flex-shrink-0" />
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-8">
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-4">Staff Picks</h3>
+                <div className="space-y-4">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-start space-x-3">
+                      <Skeleton className="h-5 w-5 rounded-full" />
+                      <div className="flex-1">
+                        <Skeleton className="h-4 w-full mb-1" />
+                        <Skeleton className="h-4 w-3/4 mb-2" />
+                        <Skeleton className="h-3 w-16" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -94,184 +158,180 @@ export default function Blogs() {
 
   if (!blogs || blogs.length === 0) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">No blogs found</h2>
-          <p className="text-muted-foreground">Check back later for new content.</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center p-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">No blogs found</h2>
+          <p className="text-gray-600 text-lg">It looks like there are no blog posts yet. Check back later for new content!</p>
         </div>
       </div>
     );
   }
 
-  const featuredPost = blogs.find(blog => blog.featured) || blogs[0];
-  const regularPosts = blogs.filter(blog => blog.id !== featuredPost.id).slice(0, 6);
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-16">
-
-        {/* Featured Article */}
-        <section className="mb-20">
-          {/* <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Featured Article</h2>
-            <p className="text-muted-foreground">Dive into our latest insights and discoveries</p>
-          </div> */}
-
-          <Card
-            className="max-w-4xl mx-auto bg-card border-border overflow-hidden cursor-pointer group hover:bg-accent/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary/10"
-            onClick={() => handleReadMore(featuredPost.slug)}
-          >
-            <div className="relative overflow-hidden">
-              <img
-                src={featuredPost.imageUrl}
-                alt={featuredPost.title}
-                className="w-full h-96 object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                  <span>{formatDate(featuredPost.publishedAt)}</span>
-                  <span>•</span>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{featuredPost.readTime} min read</span>
-                  </div>
-                </div>
-              </div>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      {/* <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center space-x-8">
+              <div className="text-2xl font-bold">Medium</div>
+              <nav className="hidden md:flex space-x-6">
+                <button className="text-gray-600 hover:text-gray-900">Write</button>
+                <button className="text-gray-600 hover:text-gray-900">Sign In</button>
+              </nav>
             </div>
-
-            <CardHeader className="pb-4">
-              <CardTitle className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
-                {featuredPost.title}
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="pb-6">
-              <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-                {featuredPost.excerpt}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12 ring-2 ring-primary/20">
-                    <AvatarImage src={featuredPost.author.avatar} />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {featuredPost.author.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-foreground">{featuredPost.author.name}</p>
-                    <p className="text-sm text-muted-foreground">{featuredPost.author.expertise || 'Tech Content Writer'}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-6 text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Eye className="w-4 h-4" />
-                    <span className="text-sm">{featuredPost.viewCount}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Heart className="w-4 h-4" />
-                    <span className="text-sm">{featuredPost.likesCount}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{featuredPost.commentsCount}</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Latest Articles */}
-        <section>
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2">Latest Articles</h2>
-              <p className="text-muted-foreground">Discover insights, tutorials, and thoughts on development</p>
+            <div className="flex items-center space-x-4">
+              <button className="bg-green-600 text-white px-4 py-1 rounded-full text-sm hover:bg-green-700">
+                Get started
+              </button>
             </div>
           </div>
+        </div>
+      </header> */}
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {regularPosts.map((blog) => (
-              <Card
-                key={blog.id}
-                className="bg-card border-border overflow-hidden cursor-pointer group hover:bg-accent/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/10"
+      {/* Navigation tabs */}
+      <div className="border-b border-gray-200 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex space-x-8 overflow-x-auto">
+            <button className="flex items-center space-x-2 py-4 border-b-2 border-gray-900 text-gray-900 whitespace-nowrap">
+              <span>For you</span>
+            </button>
+            {/* <button className="flex items-center space-x-2 py-4 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+              <span>Following</span>
+            </button>
+            <button className="flex items-center space-x-2 py-4 text-gray-600 hover:text-gray-900 whitespace-nowrap">
+              <span>Featured</span>
+              <Badge className="bg-green-600 text-white text-xs">New</Badge>
+            </button>
+            <button className="py-4 text-gray-600 hover:text-gray-900 whitespace-nowrap">Goldman Sachs</button>
+            <button className="py-4 text-gray-600 hover:text-gray-900 whitespace-nowrap">Typescript</button>
+            <button className="py-4 text-gray-600 hover:text-gray-900 whitespace-nowrap">Web3</button>
+            <button className="py-4 text-gray-600 hover:text-gray-900 whitespace-nowrap">→</button> */}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main feed */}
+          <div className="lg:col-span-2 space-y-8">
+            {blogs.map((blog) => (
+              <article 
+                key={blog.id} 
+                className="group cursor-pointer hover:bg-gray-50 p-4 -mx-4 rounded-lg transition-colors"
                 onClick={() => handleReadMore(blog.slug)}
               >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 right-4">
-                    <div className="bg-background/80 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="w-3 h-3" />
-                      {blog.readTime} min
-                    </div>
+                {/* Author info */}
+                <div className="flex items-center space-x-3 mb-3">
+                  <Avatar className="w-5 h-5">
+                    <AvatarImage src={blog.author.avatar} />
+                    <AvatarFallback className="bg-gray-500 text-white text-xs">
+                      {blog.author.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <span className="text-gray-900 font-medium">{blog.author.name}</span>
+                    <span className="text-gray-500">·</span>
+                    <span className="text-gray-500">{formatDate(blog.createdAt)}</span>
                   </div>
                 </div>
-
-                <CardHeader className="pb-3">
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {formatDate(blog.publishedAt)}
+                
+                {/* Content */}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 pr-6">
+                    <h2 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-gray-800">
+                      {blog.title}
+                    </h2>
+                    <p className="text-gray-600 text-base mb-4 line-clamp-2">
+                      {blog.excerpt}
+                    </p>
+                    
+                    {/* Engagement row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-6 text-sm text-gray-500">
+                        <span className="flex items-center space-x-1">
+                          <Star className="w-4 h-4" />
+                          <span>{blog.likesCount}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                          <MessageCircle className="w-4 h-4" />
+                          <span>{blog.commentsCount}</span>
+                        </span>
+                        <span>{blog.readTime} min read</span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3">
+                        <button 
+                          onClick={(e) => toggleBookmark(e, blog.id)}
+                          className="text-gray-500 hover:text-gray-900"
+                        >
+                          {bookmarked.has(blog.id) ? (
+                            <BookmarkCheck className="w-4 h-4" />
+                          ) : (
+                            <Bookmark className="w-4 h-4" />
+                          )}
+                        </button>
+                        <button className="text-gray-500 hover:text-gray-900">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <CardTitle className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                    {blog.title}
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent className="pb-4">
-                  <p className="text-muted-foreground line-clamp-3 mb-4">
-                    {blog.excerpt}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {blog.tags.slice(0, 3).map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="secondary"
-                        className="bg-secondary/50 text-secondary-foreground hover:bg-secondary/70 text-xs"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                    {blog.tags.length > 3 && (
-                      <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground text-xs">
-                        +{blog.tags.length - 3} more
-                      </Badge>
-                    )}
+                  
+                  {/* Thumbnail */}
+                  <div className="flex-shrink-0">
+                    <img
+                      src={blog.imageUrl}
+                      alt={blog.title}
+                      className="w-20 h-20 object-cover rounded"
+                    />
                   </div>
-                </CardContent>
+                </div>
+              </article>
+            ))}
+          </div>
 
-                <CardFooter className="pt-0 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="w-8 h-8">
+          {/* Sidebar */}
+          <div className="space-y-8">
+            {/* Staff Picks */}
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Staff Picks</h3>
+              <div className="space-y-4">
+                {blogs.slice(0, 3).map((blog) => (
+                  <div key={blog.id} className="flex items-start space-x-3 cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded">
+                    <Avatar className="w-5 h-5">
                       <AvatarImage src={blog.author.avatar} />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                      <AvatarFallback className="bg-gray-500 text-white text-xs">
                         {blog.author.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{blog.author.name}</p>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">
+                        {blog.title}
+                      </p>
+                      <p className="text-xs text-gray-500">{blog.author.name}</p>
+                      <p className="text-xs text-gray-500">{formatDate(blog.createdAt)}</p>
                     </div>
                   </div>
+                ))}
+              </div>
+              <button className="text-green-600 text-sm mt-4 hover:text-green-700">
+                See the full list
+              </button>
+            </div>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-primary hover:text-primary/80 hover:bg-primary/10 group-hover:translate-x-1 transition-transform"
-                  >
-                    Read more
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+            {/* Writing on Medium */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-3">Writing on Medium</h3>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li><a href="#" className="hover:text-gray-900">New writer FAQ</a></li>
+                <li><a href="#" className="hover:text-gray-900">Expert writing advice</a></li>
+                <li><a href="#" className="hover:text-gray-900">Grow your readership</a></li>
+              </ul>
+            </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   );

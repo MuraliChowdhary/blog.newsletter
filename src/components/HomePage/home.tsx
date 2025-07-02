@@ -77,7 +77,8 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen bg-background">
-         
+            {/* Mobile Header with Sidebar */}
+
 
             {/* Add top padding to account for fixed header */}
             <div>
