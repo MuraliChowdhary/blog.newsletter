@@ -63,39 +63,7 @@ export default function MediumBlogUI() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        {/* Header */}
-        <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex items-center justify-between h-14">
-              <div className="flex items-center space-x-8">
-                <div className="text-2xl font-bold">Medium</div>
-                <nav className="hidden md:flex space-x-6">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-4 w-16" />
-                </nav>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Skeleton className="h-8 w-8 rounded-full" />
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Navigation tabs */}
-        <div className="border-b border-gray-200 bg-white">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex space-x-8 overflow-x-auto">
-              {['For you', 'Following', 'Featured', 'Goldman Sachs', 'Typescript', 'Web3'].map((tab, i) => (
-                <div key={i} className="flex items-center space-x-2 py-4 whitespace-nowrap">
-                  <Skeleton className="h-4 w-16" />
-                  {i === 2 && <Skeleton className="h-4 w-8" />}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
+        
         {/* Main Content */}
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
