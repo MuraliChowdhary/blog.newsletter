@@ -53,7 +53,7 @@ export function Navbar() {
                                 />
                             </div>
                             <div>
-                                <h1 className=" leading-none text-xl font-bold ">
+                                <h1 className=" leading-none text-lg font-bold ">
                                     Pick & Partner
                                 </h1>
                             </div>

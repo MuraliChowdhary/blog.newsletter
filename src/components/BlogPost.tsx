@@ -1,75 +1,86 @@
 // components/BlogPostClient.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Post } from '@/types/blogTypes';
 import DOMPurify from 'dompurify';
 
-// UI and Icon Imports
+// UI and Icon Imports (ShadCN UI)
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import {
-  ArrowLeft,
-  Clock,
   Eye,
   Heart,
   MessageCircle,
   Share2,
-  BookOpen,
-  Calendar,
   User,
   Send,
-  Mail,
-  ExternalLink,
   ThumbsUp,
   Bookmark
 } from 'lucide-react';
 
 // HTML Content Renderer Component
 const HTMLContentRenderer = ({ content }: { content: string }) => {
-  // Sanitize HTML content to prevent XSS attacks
-  const sanitizedContent = DOMPurify.sanitize(content, {
-    ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'blockquote', 'ul', 'ol', 'li', 'a', 'img', 'code', 'pre', 'span',
-      'div', 'figure', 'figcaption', 'table', 'thead', 'tbody', 'tr', 'td', 'th'
-    ],
-    ALLOWED_ATTR: [
-      'href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel',
-      'width', 'height', 'style'
-    ],
-    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
-  });
+  // State to hold the sanitized content
+  const [sanitizedContent, setSanitizedContent] = useState<string>('');
+  
+  // Effect to run the sanitization and formatting only on the client-side
+  useEffect(() => {
+    let processedContent = content || '';
+
+    // Check if the content is plain text without proper HTML structure
+    // We need to check if it contains HTML tags, not just if it starts with <p>
+    const hasHtmlTags = /<\/?[a-z][\s\S]*>/i.test(processedContent);
+    
+    if (processedContent && !hasHtmlTags) {
+        // It's plain text, so we need to convert it to HTML with proper paragraph structure
+        processedContent = processedContent
+            .split('\n') // Split the string into an array of lines
+            .filter(line => line.trim() !== '') // Remove any empty lines
+            .map(line => `<p>${line.trim()}</p>`) // Wrap each line in a <p> tag and trim whitespace
+            .join(''); // Join the array back into a single string
+    }
+
+    // DOMPurify requires the 'window' object, so it can only run in the browser.
+    const sanitized = DOMPurify.sanitize(processedContent, {
+        // Define allowed tags and attributes for security
+        ALLOWED_TAGS: [
+            'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'blockquote', 'ul', 'ol', 'li', 'a', 'img', 'code', 'pre', 'span',
+            'div', 'figure', 'figcaption', 'table', 'thead', 'tbody', 'tr', 'td', 'th'
+        ],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel', 'style'],
+    });
+    setSanitizedContent(sanitized);
+  }, [content]);
 
   return (
     <div 
       className="prose prose-lg prose-gray dark:prose-invert max-w-none
-        prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-gray-100
-        prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
-        prose-strong:text-gray-900 dark:prose-strong:text-gray-100
-        prose-em:text-gray-800 dark:prose-em:text-gray-200
-        prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-6 
-        prose-blockquote:py-2 prose-blockquote:italic prose-blockquote:text-gray-800 
-        dark:prose-blockquote:text-gray-200 prose-blockquote:bg-gray-50 
-        dark:prose-blockquote:bg-gray-800 prose-blockquote:rounded-r-lg prose-blockquote:my-6
-        prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 
-        prose-code:py-1 prose-code:rounded prose-code:text-sm
-        prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-lg 
+        prose-headings:font-extrabold prose-headings:tracking-tight
+        prose-h1:text-3xl md:prose-h1:text-4xl prose-h1:mb-4
+        prose-h2:text-2xl md:prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-4
+        prose-h3:text-xl md:prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
+        prose-p:leading-relaxed prose-p:mb-6 prose-p:text-muted-foreground
+        prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-6
+        prose-blockquote:py-2 prose-blockquote:italic prose-blockquote:text-foreground
+        prose-blockquote:bg-muted prose-blockquote:rounded-r-lg prose-blockquote:my-6
+        prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm
+        prose-pre:bg-[#1e1e1e] prose-pre:text-foreground prose-pre:rounded-lg
         prose-pre:p-4 prose-pre:overflow-x-auto
-        prose-ul:list-disc prose-ol:list-decimal prose-li:mb-2
-        prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:underline 
-        prose-a:hover:text-blue-800 dark:prose-a:hover:text-blue-300
+        prose-ul:list-disc prose-ul:pl-6 prose-li:mb-2 prose-li:text-muted-foreground
+        prose-ol:list-decimal prose-ol:pl-6 prose-li:mb-2 prose-li:text-muted-foreground
+        prose-a:text-primary prose-a:no-underline hover:prose-a:underline
         prose-img:rounded-lg prose-img:shadow-lg prose-img:mx-auto prose-img:my-8
-        prose-table:border-collapse prose-th:border prose-th:border-gray-300 
-        prose-th:bg-gray-100 dark:prose-th:bg-gray-700 prose-th:p-2
-        prose-td:border prose-td:border-gray-300 prose-td:p-2
-        prose-figure:my-8 prose-figcaption:text-center prose-figcaption:text-sm 
-        prose-figcaption:text-gray-600 dark:prose-figcaption:text-gray-400 prose-figcaption:mt-2"
+        prose-table:w-full prose-table:my-8 prose-table:border-collapse
+        prose-thead:border-b prose-thead:border-border
+        prose-th:bg-muted prose-th:p-3 prose-th:text-left prose-th:font-semibold
+        prose-tbody:divide-y prose-tbody:divide-border
+        prose-td:p-3 prose-td:align-middle prose-td:text-muted-foreground"
       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
     />
   );
@@ -86,265 +97,216 @@ export default function BlogPostClient({ post }: BlogPostProps) {
   const [comments, setComments] = useState<any[]>([]);
   const router = useRouter();
 
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleLike = () => {
-    setLiked(!liked);
-    // API call to update like count would go here
-  };
-
-  const handleBookmark = () => {
-    setBookmarked(!bookmarked);
-    // API call to bookmark post would go here
-  };
+  const handleLike = () => setLiked(!liked);
+  const handleBookmark = () => setBookmarked(!bookmarked);
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post.title,
-          text: post.excerpt,
-          url: window.location.href,
+    const shareData = {
+        title: post.title,
+        text: post.excerpt,
+        url: window.location.href,
+    };
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            throw new Error('Web Share API not supported');
+        }
+    } catch (error) {
+        console.error('Share failed:', error);
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard!'); // Replace with a toast notification for better UX
         });
-      } catch (error) {
-        // Fallback for browsers that don't support Web Share API
-        navigator.clipboard.writeText(window.location.href);
-        // Optionally, show a toast or message that the link was copied
-      }
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(window.location.href);
-      // Optionally, show a toast or message that the link was copied
     }
   };
 
   const handleCommentSubmit = () => {
     if (comment.trim()) {
-      setComments([...comments, {
-        id: Date.now(),
-        text: comment,
-        author: 'Current User',
-        avatar: '/pnp.png',
-        createdAt: new Date().toISOString()
-      }]);
-      setComment('');
-      // API call to submit comment would go here
+        setComments(prevComments => [...prevComments, {
+            id: Date.now(),
+            text: comment,
+            author: 'Jane Doe',
+            avatar: 'https://i.pravatar.cc/150?u=jane-doe',
+            createdAt: new Date().toISOString()
+        }]);
+        setComment('');
     }
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
     });
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Medium-style header */}
-      {/* <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center justify-between h-14">
-            <div className="flex items-center space-x-8">
-              <button onClick={handleBack} className="text-2xl font-bold hover:text-gray-600">
-                Medium
-              </button>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button
-                onClick={handleLike}
-                variant="ghost"
-                size="sm"
-                className={`${liked ? 'text-green-600' : 'text-gray-600'} hover:text-green-600`}
-              >
-                <ThumbsUp className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
-              </Button>
-              <Button
-                onClick={handleBookmark}
-                variant="ghost"
-                size="sm"
-                className={`${bookmarked ? 'text-green-600' : 'text-gray-600'} hover:text-green-600`}
-              >
-                <Bookmark className={`w-5 h-5 ${bookmarked ? 'fill-current' : ''}`} />
-              </Button>
-              <Button onClick={handleShare} variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
-                <Share2 className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header> */}
+    <div className="min-h-screen bg-background/95 backdrop-blur-sm">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+            <article>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-6 leading-tight tracking-tight">
+                    {post.title}
+                </h1>
 
-      {/* Main content */}
-      <div className="max-w-3xl mx-auto px-6 py-12">
-        {/* Article header */}
-        <article>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            {post.title}
-          </h1>
-
-          <div className="flex items-center justify-between mb-8 pb-8 border-b border-gray-200">
-            <div className="flex items-center space-x-4">
-              <Avatar className="w-12 h-12">
-                <AvatarImage src={post.author.avatar} />
-                <AvatarFallback className="bg-gray-500 text-white">
-                  {post.author.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium text-gray-900">{post.author.name}</p>
-                <div className="flex items-center space-x-2 text-sm text-gray-500">
-                  <span>{formatDate(post.publishedAt || post.createdAt)}</span>
-                  <span>·</span>
-                  <span>{post.readTime} min read</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-6 text-sm text-gray-500">
-                <span className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span>{post.viewCount}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <Heart className="w-4 h-4" />
-                  <span>{post.likesCount + (liked ? 1 : 0)}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <MessageCircle className="w-4 h-4" />
-                  <span>{post.commentsCount}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Featured image */}
-          {post.imageUrl && (
-            <div className="mb-12">
-              <img
-                src={post.imageUrl}
-                alt={post.title}
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
-            </div>
-          )}
-
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
-              {post.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          )}
-
-          {/* Article content - HTML rendered */}
-          <div className="mb-12">
-            <HTMLContentRenderer content={post.content} />
-          </div>
-
-          {/* Engagement section */}
-          <div className="border-t border-gray-200 pt-8 mb-12">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <Button
-                  onClick={handleLike}
-                  variant={liked ? "default" : "outline"}
-                  size="sm"
-                  className={liked ? 'bg-green-600 hover:bg-green-700' : ''}
-                >
-                  <ThumbsUp className={`w-4 h-4 mr-2 ${liked ? 'fill-current' : ''}`} />
-                  {post.likesCount + (liked ? 1 : 0)}
-                </Button>
-                <Button onClick={handleShare} variant="outline" size="sm">
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </Button>
-                <Button
-                  onClick={handleBookmark}
-                  variant={bookmarked ? "default" : "outline"}
-                  size="sm"
-                  className={bookmarked ? 'bg-green-600 hover:bg-green-700' : ''}
-                >
-                  <Bookmark className={`w-4 h-4 mr-2 ${bookmarked ? 'fill-current' : ''}`} />
-                  {bookmarked ? 'Saved' : 'Save'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        {/* Comments section */}
-        <section className="mt-16">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8">
-            Comments ({post.commentsCount + comments.length})
-          </h3>
-
-          {/* Comment form */}
-          <Card className="mb-8">
-            <CardContent className="p-6">
-              <div className="flex gap-4">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src="/pnp.png" />
-                  <AvatarFallback>
-                    <User className="w-4 h-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <Textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Write a comment..."
-                    className="mb-4 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                    rows={3}
-                  />
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={handleCommentSubmit}
-                      disabled={!comment.trim()}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      Post Comment
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Comments list */}
-          <div className="space-y-6">
-            {comments.map((c) => (
-              <Card key={c.id} className="border-gray-200">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="w-8 h-8">
-                      <AvatarImage src={c.avatar} />
-                      <AvatarFallback className="bg-gray-400 text-white">
-                        {c.author.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-gray-900">{c.author}</p>
-                        <span className="text-xs text-gray-500">{formatDate(c.createdAt)}</span>
-                      </div>
-                      <p className="text-gray-700 mt-1">{c.text}</p>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-8 border-b border-border">
+                    <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+                        <Avatar className="w-14 h-14">
+                            <AvatarImage src={post.author.avatar} />
+                            <AvatarFallback className="bg-muted text-foreground">
+                                {post.author.name.charAt(0)}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p className="font-semibold text-foreground text-lg">{post.author.name}</p>
+                            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                                <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+                                <span>·</span>
+                                <span>{post.readTime} min read</span>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-      </div>
+
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <div className="flex items-center space-x-1.5 p-2 rounded-md hover:bg-muted">
+                            <Eye className="w-4 h-4" />
+                            <span>{post.viewCount.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1.5 p-2 rounded-md hover:bg-muted">
+                            <Heart className="w-4 h-4" />
+                            <span>{(post.likesCount + (liked ? 1 : 0)).toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1.5 p-2 rounded-md hover:bg-muted">
+                            <MessageCircle className="w-4 h-4" />
+                            <span>{(post.commentsCount + comments.length).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {post.imageUrl && (
+                    <div className="mb-12">
+                        <img
+                            src={post.imageUrl}
+                            alt={post.title}
+                            className="w-full h-auto rounded-xl shadow-lg border border-border"
+                        />
+                    </div>
+                )}
+
+                {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-8">
+                        {post.tags.map((tag) => (
+                            <Badge key={tag} variant="secondary" className="cursor-pointer hover:bg-primary/20">
+                                # {tag}
+                            </Badge>
+                        ))}
+                    </div>
+                )}
+
+                <div className="mb-12">
+                    <HTMLContentRenderer content={post.content} />
+                </div>
+
+                <div className="border-t border-border pt-8 mb-12">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <Button
+                                onClick={handleLike}
+                                variant="outline"
+                                size="sm"
+                                className={`transition-colors ${liked ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary' : ''}`}
+                            >
+                                <ThumbsUp className={`w-4 h-4 mr-2 ${liked ? 'fill-current' : ''}`} />
+                                Like
+                            </Button>
+                            <Button onClick={handleShare} variant="outline" size="sm">
+                                <Share2 className="w-4 h-4 mr-2" />
+                                Share
+                            </Button>
+                            <Button
+                                onClick={handleBookmark}
+                                variant="outline"
+                                size="sm"
+                                className={`transition-colors ${bookmarked ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary' : ''}`}
+                            >
+                                <Bookmark className={`w-4 h-4 mr-2 ${bookmarked ? 'fill-current' : ''}`} />
+                                {bookmarked ? 'Saved' : 'Save'}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Comments Section */}
+                <div className="border-t border-border pt-8">
+                    <h3 className="text-2xl font-bold text-foreground mb-6">
+                        Comments ({(post.commentsCount + comments.length).toLocaleString()})
+                    </h3>
+                    
+                    {/* Comment Input */}
+                    <div className="mb-8">
+                        <div className="flex items-start space-x-4">
+                            <Avatar className="w-10 h-10 flex-shrink-0">
+                                <AvatarImage src="/pnp.png" />
+                                <AvatarFallback className="bg-muted text-foreground">
+                                    <User className="w-5 h-5" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                                <Textarea
+                                    placeholder="Write a comment..."
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    className="mb-3 resize-none"
+                                    rows={3}
+                                />
+                                <div className="flex justify-end">
+                                    <Button
+                                        onClick={handleCommentSubmit}
+                                        size="sm"
+                                        disabled={!comment.trim()}
+                                        className="ml-auto"
+                                    >
+                                        <Send className="w-4 h-4 mr-2" />
+                                        Post Comment
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Comments List */}
+                    <div className="space-y-6">
+                        {comments.map((commentItem) => (
+                            <Card key={commentItem.id} className="border-0 shadow-none bg-muted/50">
+                                <CardContent className="p-4">
+                                    <div className="flex items-start space-x-3">
+                                        <Avatar className="w-10 h-10 flex-shrink-0">
+                                            <AvatarImage src={commentItem.avatar} />
+                                            <AvatarFallback className="bg-muted text-foreground">
+                                                {commentItem.author.charAt(0)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1">
+                                            <div className="flex items-center space-x-2 mb-2">
+                                                <span className="font-semibold text-foreground text-sm">
+                                                    {commentItem.author}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {formatDate(commentItem.createdAt)}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                                {commentItem.text}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            </article>
+        </div>
     </div>
   );
 }
