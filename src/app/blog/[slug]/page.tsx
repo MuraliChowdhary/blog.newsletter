@@ -1,23 +1,28 @@
 // app/blog/[slug]/page.tsx
+
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Post } from '@/types/blogTypes';
 import BlogPostClient from '@/components/BlogPost';
 
+// Corrected Props type
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 };
 
 async function fetchBlogPost(slug: string): Promise<Post | null> {
   try {
-    // We use { cache: 'no-store' } to ensure we get the latest post data on every request.
-    // For better performance, you could use revalidation: { next: { revalidate: 3600 } }
+    // --- PERFORMANCE FIX ---
+    // Instead of 'no-store', we use revalidation.
+    // This tells Next.js to cache the page and serve it statically.
+    // The page will be re-generated in the background every 3600 seconds (1 hour)
+    // if a new request comes in after that time.
+    // This makes page loads almost instantaneous after the first visit.
     const response = await fetch(
       `https://backend.muralisudireddy0.workers.dev/api/v1/blog/${slug}`,
-      { cache: 'no-store' }
+      { next: { revalidate: 1000 } }  
     );
 
-    // If the response is not OK (e.g., 404 Not Found), we return null.
     if (!response.ok) {
       return null;
     }
@@ -31,8 +36,7 @@ async function fetchBlogPost(slug: string): Promise<Post | null> {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // Await the params since it's now a Promise
-  const { slug } = await params;
+  const { slug } = params; // No await needed
   const post = await fetchBlogPost(slug);
 
   if (!post) {
@@ -47,28 +51,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: [
+      images: post.imageUrl ? [
         {
           url: post.imageUrl,
           width: 1200,
           height: 630,
         },
-      ],
+      ] : [],
     },
   };
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug } = params; // No await needed
 
-  // Fetch the data for the specific slug.
   const post = await fetchBlogPost(slug);
 
-  // If no post is found, trigger the not-found.tsx UI boundary.
   if (!post) {
     notFound();
   }
 
-  // If the post is found, render the client component and pass the data as a prop.
   return <BlogPostClient post={post} />;
 }

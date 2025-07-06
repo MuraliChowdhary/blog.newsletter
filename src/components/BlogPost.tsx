@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import {
+  ArrowLeft, // Added for the back button
   Eye,
   Heart,
   MessageCircle,
@@ -33,15 +34,14 @@ const HTMLContentRenderer = ({ content }: { content: string }) => {
     let processedContent = content || '';
 
     // Check if the content is plain text without proper HTML structure
-    // We need to check if it contains HTML tags, not just if it starts with <p>
     const hasHtmlTags = /<\/?[a-z][\s\S]*>/i.test(processedContent);
     
     if (processedContent && !hasHtmlTags) {
-        // It's plain text, so we need to convert it to HTML with proper paragraph structure
+        // It's plain text, so we convert it to HTML with proper paragraph structure
         processedContent = processedContent
             .split('\n') // Split the string into an array of lines
             .filter(line => line.trim() !== '') // Remove any empty lines
-            .map(line => `<p>${line.trim()}</p>`) // Wrap each line in a <p> tag and trim whitespace
+            .map(line => `<p>${line.trim()}</p>`) // Wrap each line in a <p> tag
             .join(''); // Join the array back into a single string
     }
 
@@ -144,6 +144,15 @@ export default function BlogPostClient({ post }: BlogPostProps) {
   return (
     <div className="min-h-screen bg-background/95 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+            
+            {/* Back Button */}
+            <div className="mb-8">
+                <Button variant="ghost" onClick={() => router.back()} className="text-muted-foreground hover:text-foreground">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back
+                </Button>
+            </div>
+
             <article>
                 <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-6 leading-tight tracking-tight">
                     {post.title}
@@ -184,12 +193,15 @@ export default function BlogPostClient({ post }: BlogPostProps) {
                 </div>
 
                 {post.imageUrl && (
-                    <div className="mb-12">
-                        <img
-                            src={post.imageUrl}
-                            alt={post.title}
-                            className="w-full h-auto rounded-xl shadow-lg border border-border"
-                        />
+                    <div className="mb-12 flex justify-center">
+                        <div className="relative max-w-2xl w-full">
+                            <img
+                                src={post.imageUrl}
+                                alt={post.title}
+                                loading="lazy"
+                                className="w-full h-auto max-h-96 object-cover rounded-xl shadow-lg border border-border"
+                            />
+                        </div>
                     </div>
                 )}
 
