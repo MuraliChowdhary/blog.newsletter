@@ -1,75 +1,135 @@
 // app/blog/[slug]/page.tsx
 
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { Post } from '@/types/blogTypes';
-import BlogPostClient from '@/components/BlogPost';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Post } from "@/types/blogTypes";
+import BlogPostClient from "@/components/BlogPost";
 
-// Corrected Props type
+// Define the full props type expected by Next.js pages
 type Props = {
   params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 async function fetchBlogPost(slug: string): Promise<Post | null> {
   try {
-    // --- PERFORMANCE FIX ---
-    // Instead of 'no-store', we use revalidation.
-    // This tells Next.js to cache the page and serve it statically.
-    // The page will be re-generated in the background every 3600 seconds (1 hour)
-    // if a new request comes in after that time.
-    // This makes page loads almost instantaneous after the first visit.
     const response = await fetch(
       `https://backend.muralisudireddy0.workers.dev/api/v1/blog/${slug}`,
-      { next: { revalidate: 1000 } }  
+      { next: { revalidate: 3600 } }
     );
 
-    if (!response.ok) {
-      return null;
-    }
-
+    if (!response.ok) return null;
     const json = await response.json();
     return json.data;
   } catch (error) {
-    console.error('Failed to fetch blog post:', error);
+    console.error("Failed to fetch blog post:", error);
     return null;
   }
 }
 
+// ✅ Use the full 'Props' type
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params; // No await needed
-  const post = await fetchBlogPost(slug);
+  const post = await fetchBlogPost(params.slug);
 
   if (!post) {
     return {
-      title: 'Post Not Found',
+      title: "Post Not Found | NextDevs",
+      description:
+        "The content you are looking for might have been removed or is unavailable.",
+      robots: { index: false, follow: false },
     };
   }
 
+  const ogImage = post.imageUrl || "https://blog.nextdevs.me/images/og-blog.jpg";
+  const canonical = `https://blog.nextdevs.me/blog/${post.slug}`;
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title: `${post.title} | NextDevs`,
+    description:
+      post.excerpt ||
+      "Explore trending discussions, latest news, and user stories across technology, culture, startups, and more.",
+    keywords: [
+      "NextDevs",
+      "trending topics",
+      "latest news",
+      "community discussions",
+      "social media platform",
+      "technology",
+      "AI",
+      "startups",
+      "innovation",
+      "entertainment",
+      "culture",
+    ],
+    alternates: { canonical },
     openGraph: {
       title: post.title,
-      description: post.excerpt,
-      images: post.imageUrl ? [
+      description: post.excerpt || "Join the discussion on NextDevs!",
+      url: canonical,
+      siteName: "NextDevs",
+      type: "article",
+      images: [
         {
-          url: post.imageUrl,
+          url: ogImage,
           width: 1200,
           height: 630,
+          alt: post.title,
         },
-      ] : [],
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description:
+        post.excerpt || "Discover trending stories and discussions on NextDevs!",
+      images: [ogImage],
+      creator: "@NextDevsOfficial",
     },
   };
 }
 
+// ✅ Use the full 'Props' type
 export default async function BlogPostPage({ params }: Props) {
-  const { slug } = params; // No await needed
+  const post = await fetchBlogPost(params.slug);
+  if (!post) notFound();
 
-  const post = await fetchBlogPost(slug);
+  const canonicalUrl = `https://blog.nextdevs.me/blog/${post.slug}`;
+  const ogImage = post.imageUrl || "https://blog.nextdevs.me/images/og-blog.jpg";
 
-  if (!post) {
-    notFound();
-  }
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SocialMediaPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    headline: post.title,
+    description: post.excerpt,
+    image: ogImage,
+    author: {
+      "@type": "Person",
+      name: post.author || "NextDevs User",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "NextDevs",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://blog.nextdevs.me/logo.png",
+      },
+    },
+    datePublished: post.createdAt || new Date().toISOString(),
+    dateModified: post.updatedAt || post.createdAt,
+    commentCount: post.commentCount || 0,
+  };
 
-  return <BlogPostClient post={post} />;
+  return (
+    <article className="prose mx-auto">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <BlogPostClient post={post} />
+    </article>
+  );
 }

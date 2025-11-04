@@ -23,6 +23,8 @@ export interface Post {
   commentsCount: number;
   likesCount: number;
   author: Author;
+  updatedAt: string;
+  commentCount?: number;
 }
 
 export interface BlogsResponse {
