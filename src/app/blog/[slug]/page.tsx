@@ -5,10 +5,10 @@ import { notFound } from "next/navigation";
 import { Post } from "@/types/blogTypes";
 import BlogPostClient from "@/components/BlogPost";
 
-// Define the full props type expected by Next.js pages
+// ✅ Updated Props type - params is now a Promise
 type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 async function fetchBlogPost(slug: string): Promise<Post | null> {
@@ -27,9 +27,10 @@ async function fetchBlogPost(slug: string): Promise<Post | null> {
   }
 }
 
-// ✅ Use the full 'Props' type
+// ✅ Await params before using
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await fetchBlogPost(params.slug);
+  const { slug } = await params;
+  const post = await fetchBlogPost(slug);
 
   if (!post) {
     return {
@@ -88,9 +89,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// ✅ Use the full 'Props' type
+// ✅ Await params before using
 export default async function BlogPostPage({ params }: Props) {
-  const post = await fetchBlogPost(params.slug);
+  const { slug } = await params;
+  const post = await fetchBlogPost(slug);
   if (!post) notFound();
 
   const canonicalUrl = `https://blog.nextdevs.me/blog/${post.slug}`;
