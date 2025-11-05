@@ -59,8 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       "AI",
       "startups",
       "innovation",
-      "entertainment",
-      "culture",
+      "entertainment"
     ],
     alternates: { canonical },
     openGraph: {
