@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Post } from "@/types/blogTypes";
 import BlogPostClient from "@/components/BlogPost";
+import Script from "next/script";
 
 // ✅ Updated Props type - params is now a Promise
 type Props = {
@@ -126,7 +127,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <article className="prose mx-auto">
-      <script
+      <Script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
