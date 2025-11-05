@@ -5,10 +5,14 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/navbar/nav';
 import { Toaster } from 'sonner';
 
-const inter = Inter({ subsets: ['latin'] ,display: 'swap',preload: true,
-  adjustFontFallback: true,});
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true,
+});
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "NextDevs | Share Ideas, Discover Trends, and Join the Conversation",
   description:
     "NextDevs is a modern social platform for sharing ideas, exploring the latest news, and discovering trending discussions on technology, startups, culture, entertainment, and more.",
@@ -27,6 +31,9 @@ export const metadata = {
     "digital trends",
     "user stories",
   ],
+  verification: {
+    google: "rlA59x1ed6IQBB54FH7DatTyyYzaVujxXPtJawunOLE",
+  },
   openGraph: {
     title: "NextDevs | Share Ideas, Discover Trends, and Join the Conversation",
     description:
@@ -50,13 +57,13 @@ export const metadata = {
     description:
       "Discover fresh ideas and trending stories on NextDevs – a modern platform for sharing and exploring community posts about tech, culture, startups, and more.",
     images: ["https://blog.nextdevs.me/images/og-blog.jpg"],
-    creator: "@NextDevsOfficial", // optional
+    creator: "@NextDevsOfficial",
   },
-  alternates: { canonical: "https://blog.nextdevs.me/" },
+  alternates: { 
+    canonical: "https://blog.nextdevs.me/" 
+  },
   metadataBase: new URL("https://blog.nextdevs.me"),
 };
-
-
 
 export default function RootLayout({
   children,
@@ -65,10 +72,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-       <head>
-        <link rel="preconnect" href="https://backend.muralisudireddy0.workers.dev" />
-        <link rel="dns-prefetch" href="https://backend.muralisudireddy0.workers.dev" />
-      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -82,7 +85,6 @@ export default function RootLayout({
           </div>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
-
       </body>
     </html>
   );
