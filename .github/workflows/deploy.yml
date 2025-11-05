@@ -19,22 +19,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup pnpm FIRST
+      # 2️⃣ Setup pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      # 3️⃣ Setup Node.js (this will detect pnpm from previous step)
+      # 3️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'pnpm'
 
-      # 4️⃣ Install dependencies
+      # 4️⃣ Install dependencies (without frozen-lockfile)
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       # 5️⃣ Build your frontend
       - name: Build project
