@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/navbar/nav';
 import { Toaster } from 'sonner';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'] ,display: 'swap',});
 
 export const metadata = {
   title: "NextDevs | Share Ideas, Discover Trends, and Join the Conversation",
