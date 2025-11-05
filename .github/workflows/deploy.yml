@@ -19,18 +19,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js
+      # 2️⃣ Setup pnpm FIRST
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # 3️⃣ Setup Node.js (this will detect pnpm from previous step)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'pnpm'
-
-      # 3️⃣ Install pnpm (this MUST come before any pnpm commands)
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8   # or the pnpm version you use locally (check with `pnpm -v`)
 
       # 4️⃣ Install dependencies
       - name: Install dependencies
@@ -40,7 +40,7 @@ jobs:
       - name: Build project
         run: pnpm run build
 
-      # 6️⃣ Deploy to Vercel (based on branch)
+      # 6️⃣ Deploy to Vercel
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
