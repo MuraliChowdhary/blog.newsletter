@@ -64,6 +64,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+       <head>
+        <link rel="preconnect" href="https://backend.muralisudireddy0.workers.dev" />
+        <link rel="dns-prefetch" href="https://backend.muralisudireddy0.workers.dev" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
