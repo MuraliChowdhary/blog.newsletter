@@ -24,15 +24,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'pnpm'  # Enables pnpm cache in Actions
+          cache: 'pnpm'
 
-      # 3️⃣ Install pnpm
+      # 3️⃣ Install pnpm (this MUST come before any pnpm commands)
       - name: Install pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v2
         with:
-          version: 8  # or whichever version you use
+          version: 8   # or the pnpm version you use locally (check with `pnpm -v`)
 
-      # 4️⃣ Install dependencies using pnpm
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
