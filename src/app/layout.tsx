@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/navbar/nav';
 import { Toaster } from 'sonner';
+import Script from 'next/script';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -81,6 +82,23 @@ export default function RootLayout({
         >
           <div className="min-h-screen bg-background">
             <Navbar />
+            <Script
+            async
+            src="https://plausible.io/js/pa-02pFWloxqRWKKY0bkzOpU.js"
+            strategy="afterInteractive"
+          />
+
+        <Script id="plausible-init" strategy="afterInteractive">
+          {`
+            window.plausible = window.plausible || function() {
+              (plausible.q = plausible.q || []).push(arguments);
+            };
+            plausible.init = plausible.init || function(i) {
+              plausible.o = i || {};
+            };
+            plausible.init();
+          `}
+        </Script>
             <main>{children}</main>
           </div>
           <Toaster richColors position="top-right" />
