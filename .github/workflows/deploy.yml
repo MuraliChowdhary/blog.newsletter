@@ -6,80 +6,118 @@ on:
       - main
       - staging
       - production
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
+      - '!.github/workflows/**'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
 
-# Optimize concurrency - cancel in-progress runs
+# Cancel in-progress runs
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      # 1️⃣ Checkout code with minimal depth
-      - name: Checkout repository
+      # 1️⃣ Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      # 2️⃣ Setup pnpm with latest version
+      # 2️⃣ Setup pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
+          run_install: false
 
-      # 3️⃣ Setup Node.js with caching
+      # 3️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
-      # 4️⃣ Get pnpm store directory for advanced caching
+      # 4️⃣ Get pnpm store path
       - name: Get pnpm store directory
         shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      # 5️⃣ Cache pnpm store
-      - name: Setup pnpm cache
+      # 5️⃣ Cache everything
+      - name: Cache dependencies and build
         uses: actions/cache@v4
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      # 6️⃣ Cache Next.js build
-      - name: Cache Next.js build
-        uses: actions/cache@v4
+        id: cache-deps
         with:
           path: |
+            ${{ env.STORE_PATH }}
+            node_modules
             .next/cache
             .vercel
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-pnpm-
 
-      # 7️⃣ Install dependencies with frozen lockfile
+      # 6️⃣ Install dependencies
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile --prefer-offline
 
-      # 8️⃣ Deploy to Vercel (skip build - let Vercel handle it)
+      # 7️⃣ Install Vercel CLI
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      # 8️⃣ Pull Vercel Environment Information
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=${{ github.event_name == 'pull_request' && 'preview' || 'production' }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 9️⃣ Build Project Artifacts
+      - name: Build Project
+        run: vercel build ${{ github.event_name == 'pull_request' && '' || '--prod' }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 🔟 Deploy to Vercel
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt ${{ github.event_name == 'pull_request' && '' || '--prod' }} --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "### 🚀 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** $URL" >> $GITHUB_STEP_SUMMARY
+
+      # 1️⃣1️⃣ Set Custom Domain (for staging/production)
+      - name: Assign Custom Domain
+        if: github.event_name != 'pull_request'
+        run: |
+          if [ "${{ github.ref_name }}" == "staging" ]; then
+            vercel alias set ${{ steps.deploy.outputs.url }} staging.blog.nextdevs.me --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
+          elif [ "${{ github.ref_name }}" == "production" ]; then
+            vercel alias set ${{ steps.deploy.outputs.url }} blog.nextdevs.me --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }}
+          fi
+
+      # 1️⃣2️⃣ Comment PR with preview URL
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./
-          vercel-args: ${{ github.event_name == 'pull_request' && '' || '--prod' }}
-          alias-domains: |
-            ${{ github.ref_name == 'staging' && 'staging.blog.nextdevs.me' || '' }}
-            ${{ github.ref_name == 'production' && 'blog.nextdevs.me' || '' }}
-        env:
-          VERCEL_ENV: ${{ github.ref_name }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 🚀 Preview Deployment Ready!\n\n**URL:** ${{ steps.deploy.outputs.url }}\n\n*Deployed from commit ${{ github.sha }}*`
+            })

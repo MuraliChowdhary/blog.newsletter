@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://blog.nextdevs.me
+
+# Sitemaps
+Sitemap: https://blog.nextdevs.me/sitemap.xml
